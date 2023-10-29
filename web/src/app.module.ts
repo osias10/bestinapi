@@ -1,0 +1,22 @@
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { HelloController } from './hello/hello.controller';
+import { HelloService } from './hello/hello.service';
+import { SocketService } from './socket/socket.service';
+import { LightService } from './light/light.service';
+import { SocketModule } from './socket/socket.module';
+import { BiosapiController } from './biosapi/biosapi.controller';
+import { TypeOrmModule } from '@nestjs/typeorm/dist';
+import { typeORMConfig } from 'typeorm.config';
+import { UsersService } from './users/users.service';
+import { UsersModule } from './users/users.module';
+import { AuthenticationService } from './authentication/authentication.service';
+import { AuthenticationModule } from './authentication/authentication.module';
+
+@Module({
+  imports: [SocketModule, TypeOrmModule.forRoot(typeORMConfig), UsersModule, AuthenticationModule],
+  controllers: [AppController, HelloController, BiosapiController],
+  providers: [AppService, HelloService, SocketService, LightService, AuthenticationService],
+})
+export class AppModule {}
