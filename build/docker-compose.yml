@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  bestinapi_db:
+    image: mariadb:11
+    environment:
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+    networks:
+      - bestinapi_network
+    ports:
+      - "3036:3306"
+    restart: always
+  bestinapi_web:
+    depends_on:
+      - bestinapi_db
+    image: bestinapi:0.1
+    networks:
+      - bestinapi_network
+    ports:
+      - "3000:3000"
+    restart: always
+    links:
+      - bestinapi_db
+networks:
+  - bestinapi_network
