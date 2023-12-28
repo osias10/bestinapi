@@ -22,11 +22,11 @@ export class TransformInterceptor<T>
     next: CallHandler
   ): Observable<Response<T>> {
     return next.handle().pipe(
-      map((data) => ({
+      map((result) => ({
         statusCode: context.switchToHttp().getResponse().statusCode,
         reqId: context.switchToHttp().getRequest().reqId,
-        message: data.message || '',
-        data: data,
+        message: result.message || '',
+        data: result.data,
       }))
     );
   }

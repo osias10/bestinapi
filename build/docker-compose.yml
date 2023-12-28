@@ -10,6 +10,8 @@ services:
       - bestinapi_network
     ports:
       - "3036:3306"
+    volumes:
+      - bestinapi:/var/lib/mysql
     restart: always
   bestinapi_web:
     depends_on:

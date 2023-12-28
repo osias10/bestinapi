@@ -13,10 +13,11 @@ import { UsersService } from './users/users.service';
 import { UsersModule } from './users/users.module';
 import { AuthenticationService } from './authentication/authentication.service';
 import { AuthenticationModule } from './authentication/authentication.module';
+import { ApartService } from './apart/apart.service';
 
 @Module({
   imports: [SocketModule, TypeOrmModule.forRoot(typeORMConfig), UsersModule, AuthenticationModule],
   controllers: [AppController, HelloController, BiosapiController],
-  providers: [AppService, HelloService, SocketService, LightService, AuthenticationService],
+  providers: [AppService, HelloService, SocketService, LightService, AuthenticationService, ApartService],
 })
 export class AppModule {}

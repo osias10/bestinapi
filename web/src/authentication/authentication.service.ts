@@ -14,18 +14,18 @@ export class AuthenticationService {
 	public async getAuthenticatedUser(email: string, plainTextPassword: string) {
 		try {
 		  const user = await this.usersService.getByEmail(email);
-		  console.log(plainTextPassword);
+		//   console.log(plainTextPassword);
 			let hashpw: string = await bcrypt.hash(plainTextPassword,10);
-		  console.log(hashpw);
+		//   console.log(hashpw);
 		  await this.verifyPassword(plainTextPassword, user.password);
 			await this.verifyStatus(user.status);
 			await this.verifyExpired(user.expire_date);
 		  user.password = undefined;
 		  return user;
 		} catch (error) {
-      console.log(error)
-			throw error
-      throw new HttpException('잘못된 인증 정보입니다.', HttpStatus.BAD_REQUEST);
+      		console.log(error)
+			// throw error
+      		throw new HttpException('잘못된 인증 정보입니다.', HttpStatus.BAD_REQUEST);
     }
 	}
 	  

@@ -10,7 +10,7 @@ export class CommandStatus{
   // 명령어가 이미 동작 중인지 검사
   static isRunningCommand(user: User, req: string, room: string): boolean {
     CommandStatus.initDict(user, req, room);
-    console.log("isRunningCommand");
+    // console.log("isRunningCommand");
     console.log(CommandStatus.cmdStatus[user.dong][user.ho][req][room]);
     if (CommandStatus.cmdStatus[user.dong][user.ho][req][room]['command']['status'] == 1) {
       let now: number = new Date().getTime();
@@ -54,8 +54,8 @@ export class CommandStatus{
 
   static initDict(user: User, req: string, room: string) {
     try {
-      console.log("init");
-      console.log(CommandStatus.cmdStatus[user.dong][user.ho][req]);
+      // console.log("init");
+      // console.log(CommandStatus.cmdStatus[user.dong][user.ho][req]);
     } catch (error) {
 
     }
@@ -75,15 +75,19 @@ export class CommandStatus{
       CommandStatus.cmdStatus[user.dong][user.ho][req][room]['command'] = {}
     }
     if (! CommandStatus.cmdStatus[user.dong][user.ho][req][room]['command'].hasOwnProperty('status')) {
-      console.log("stats없음");
-      console.log(CommandStatus.cmdStatus[user.dong][user.ho][req]);
+      // console.log("stats없음");
+      // console.log(CommandStatus.cmdStatus[user.dong][user.ho][req]);
       CommandStatus.cmdStatus[user.dong][user.ho][req][room]['command']['status'] = 0
     }
-    console.log("init_finish");
-    console.log(CommandStatus.cmdStatus[user.dong][user.ho][req]);
+    // console.log("init_finish");
+    // console.log(CommandStatus.cmdStatus[user.dong][user.ho][req]);
   }
 }
 
 function sleep(sec) {
   return new Promise(resolve => setTimeout(resolve, sec * 1000));
+}
+
+export class bestinStatus {
+  static biStatus: any = {};
 }
