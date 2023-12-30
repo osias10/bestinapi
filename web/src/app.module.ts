@@ -14,10 +14,12 @@ import { UsersModule } from './users/users.module';
 import { AuthenticationService } from './authentication/authentication.service';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { ApartService } from './apart/apart.service';
+import { Config } from './config/config.entity';
+import { ConfigModule } from './config/config.module';
 
 @Module({
-  imports: [SocketModule, TypeOrmModule.forRoot(typeORMConfig), UsersModule, AuthenticationModule],
+  imports: [SocketModule, TypeOrmModule.forRoot(typeORMConfig), UsersModule, AuthenticationModule, ConfigModule],
   controllers: [AppController, HelloController, BiosapiController],
-  providers: [AppService, HelloService, SocketService, LightService, AuthenticationService, ApartService],
+  providers: [AppService, HelloService, LightService, AuthenticationService, ApartService],
 })
 export class AppModule {}

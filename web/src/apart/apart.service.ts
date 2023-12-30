@@ -1,15 +1,33 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from 'src/config/config.service';
 import { SocketService } from 'src/socket/socket.service';
 import User from 'src/users/user.entity';
 
 @Injectable()
 export class ApartService {
-  constructor(private readonly socketService: SocketService) {}
+  constructor(
+    private readonly socketService: SocketService,
+    private readonly configService: ConfigService
+    ) {}
   async requestElevator(user: User, direction: string) {
-    let elvServerIp = "10.0.1.1";
-    let request: string = this.makeElvXml(user.ip, direction);
+    let elvServerIp: string = "10.0.1.1";
+    let elvServerPort: number = 10000;
     try {
-      let result = await this.socketService.requestSocket(elvServerIp, 10000, request);
+      let elvServer = await this.configService.getElvServer();
+      if (elvServer.server_ip != null && elvServer.server_port != null) {
+        elvServerIp = elvServer.server_ip;
+        elvServerPort = elvServer.server_port;
+      }
+    } catch (error) {
+      console.log("elvServerIp read fail");
+    } finally {
+      elvServerIp = "10.0.1.1";
+      elvServerPort = 10000;
+    }
+    let request: string = this.makeElvXml(user, direction);
+    console.log(request);
+    try {
+      let result = await this.socketService.requestSocket(elvServerIp, elvServerPort, request);
       return this.makeResult(getSuccessXmlResult(result));
     } catch (error) {
       console.log("Elv Error");
@@ -17,7 +35,7 @@ export class ApartService {
     }
   }
 
-  makeElvXml(user: User, direction: string) {
+  makeElvXml(user: User, direction: string): string {
     let event = "elevator_dn";
   
     if (direction == "up") {
@@ -26,10 +44,10 @@ export class ApartService {
       event = "elevator_dn";
     }
   
-    let request = `<?xml version="1.0" encoding="utf-8"?>
-      <imap ver = "1.0" address = "${user.ip}" sender = "${user.dong}동 ${user.ho}호">
+    let request: string = `<?xml version="1.0" encoding="utf-8"?>
+      <imap ver = "1.0" address = "${user.ip}" sender = "mobile">
         <service type = "request" name= "event_notify">
-        <event> "${event}" </event>
+        <event>"${event}"</event>
       </service>
      </imap>
     `
