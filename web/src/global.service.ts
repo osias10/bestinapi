@@ -41,15 +41,18 @@ export class CommandStatus{
       if (CommandStatus.setRunningCommand(user, req, room)) {
         return true;
       }
-      console.log("기다리는중");
+      // console.log("기다리는중");
       await sleep(0.3);
+      // console.log("기다림끝")
     }
     return false;
   }
 
   static async removeRunningCommand(user: User, req: string, room: string): Promise<void> {
+    //실행 후 1초 delay
+    await sleep(1);
     CommandStatus.cmdStatus[user.dong][user.ho][req][room]['command']['status'] = 0;
-    await sleep(0.3);
+    CommandStatus.cmdStatus[user.dong][user.ho][req][room]['command']['time'] = new Date().getTime();
   }
 
   static initDict(user: User, req: string, room: string) {

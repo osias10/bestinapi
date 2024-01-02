@@ -18,7 +18,7 @@ export class LightService {
         console.log ("socket 실행 에러 발생:" , error)
         return ("Socket Error")
       } finally {
-        console.log ("실행 종료");
+        console.log ("[Light On] 실행 종료");
         await CommandStatus.removeRunningCommand(user, "light", devNum);
       }
       return "Success"
@@ -36,7 +36,7 @@ export class LightService {
         console.log ("socket 실행 에러 발생:" , error)
         return ("Socket Error")
       } finally {
-        console.log ("실행 종료");
+        console.log ("[Light Off] 실행 종료");
         await CommandStatus.removeRunningCommand(user, "light", devNum);
       }
       return "Success"
@@ -63,7 +63,7 @@ export class LightService {
         console.log ("socket 실행 에러 발생:" , error)
         return ("Socket Error")
       } finally {
-        console.log ("실행 종료");
+        console.log ("[Light Status] 실행 종료");
         //await CommandStatus.removeRunningCommand(user, "light", devNum);
       }
       return "Success"
