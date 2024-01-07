@@ -11,13 +11,14 @@ export class AuthenticationService {
 	// public async register(registrationData: RegisterDto)
 	// public hashedPassword = await bcrypt.hash(registratio
 
-	public async getAuthenticatedUser(email: string, plainTextPassword: string) {
+	public async getAuthenticatedUser(deviceSerial: string, email: string, plainTextPassword: string) {
 		try {
 		  const user = await this.usersService.getByEmail(email);
 		//   console.log(plainTextPassword);
 			let hashpw: string = await bcrypt.hash(plainTextPassword,10);
 		//   console.log(hashpw);
 		  await this.verifyPassword(plainTextPassword, user.password);
+			await this.verifyDeviceSerial(deviceSerial, user.deviceSerial);
 			await this.verifyStatus(user.status);
 			await this.verifyExpired(user.expire_date);
 		  user.password = undefined;
@@ -50,6 +51,13 @@ export class AuthenticationService {
 	private async verifyStatus(status: number) {
 		if (status != 1) {
 			throw new HttpException('활성화 되지 않은 계정입니다.', HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	private async verifyDeviceSerial(inputDeviceSerial: string, storedDeviceSerial: string) {
+		if (inputDeviceSerial != storedDeviceSerial) {
+			console.log(`deviceSerial: ${inputDeviceSerial}, storedeivceSerail: ${storedDeviceSerial}`)
+			throw new HttpException('시리얼이 일치하지 않습니다.', HttpStatus.BAD_REQUEST);
 		}
 	}
 	

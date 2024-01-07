@@ -19,14 +19,20 @@ export class User {
   ho: string;
 
   @Column()
-  password: string;
+  public name: string;
   
   @Column({unique: true})
   public email: string;
 
   @Column()
-  public name: string;
-  
+  password: string;
+
+  @Column({
+    length: 50,
+    comment: "보드 serial"
+  })
+  deviceSerial: string;
+
   @Column({
     length: 25
   })
