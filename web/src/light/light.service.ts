@@ -45,7 +45,7 @@ export class LightService {
     } 
   }
 
-  async requestStatus(user: User, devNum: string, unitNum: string): Promise<Object> {
+  async requestLightStatus(user: User, devNum: string, unitNum: string): Promise<Object> {
     // if (await CommandStatus.waitRunningCommand(user, "light", devNum)) {
     if (true) {
       try {

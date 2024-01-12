@@ -16,10 +16,11 @@ import { AuthenticationModule } from './authentication/authentication.module';
 import { ApartService } from './apart/apart.service';
 import { Config } from './config/config.entity';
 import { ConfigModule } from './config/config.module';
+import { HeaterService } from './heater/heater.service';
 
 @Module({
   imports: [SocketModule, TypeOrmModule.forRoot(typeORMConfig), UsersModule, AuthenticationModule, ConfigModule],
   controllers: [AppController, HelloController, BiosapiController],
-  providers: [AppService, HelloService, LightService, AuthenticationService, ApartService],
+  providers: [AppService, HelloService, LightService, AuthenticationService, ApartService, HeaterService],
 })
 export class AppModule {}

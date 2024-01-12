@@ -1,13 +1,17 @@
-import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { stringify } from 'querystring';
 import { ApartService } from 'src/apart/apart.service';
 import { LocalAuthenticationGuard } from 'src/authentication/localAuthentication.guard';
 import RequestWithUser from 'src/authentication/requestWithUser.interface';
+import { HeaterService } from 'src/heater/heater.service';
 import { LightService } from 'src/light/light.service';
 
 @Controller('biosapi')
 export class BiosapiController {
-  constructor(private readonly lightService: LightService, private readonly apartService: ApartService) {}
+  constructor(
+    private readonly lightService: LightService,
+    private readonly apartService: ApartService,
+    private readonly heaterService: HeaterService) {}
 
   @UseGuards(LocalAuthenticationGuard)
   @Post('lighton')
@@ -46,7 +50,7 @@ export class BiosapiController {
     let user = request.user;
     try{
       console.log(`[Light Status] address: ${user.dong}-${user.ho} devnum: ${devNum}, unitNum: ${unitNum}`);
-      result = await this.lightService.requestStatus(user, devNum, unitNum);
+      result = await this.lightService.requestLightStatus(user, devNum, unitNum);
     } catch (error) {
       result = error;
     }
@@ -62,6 +66,41 @@ export class BiosapiController {
       console.log(`[Request Elevator] address: ${user.dong}-${user.ho} direction: ${direction}`);
       result = await this.apartService.requestElevator(user, direction);
       
+    } catch (error) {
+      result = error;
+    }
+    return result;
+  }
+
+  @UseGuards(LocalAuthenticationGuard)
+  @Get('heater')
+  async heaterStatus(@Req() request: RequestWithUser, @Body('unitNum') unitNum: string) {
+    let result;
+    let user = request.user;
+    try{
+      console.log(`[Heater Status] address: ${user.dong}-${user.ho} unitNum: ${unitNum}`);
+      result = await this.heaterService.requestHeaterStatus(user, unitNum);
+    } catch (error) {
+      result = error;
+    }
+    return result;
+  }
+
+  @UseGuards(LocalAuthenticationGuard)
+  @Post('heater')
+  async heater(@Req() request: RequestWithUser, @Body('unitNum') unitNum: string, @Body('unitStatus') unitStatus: string, @Body('unitTemp') unitTemp: number) {
+    let result;
+    let user = request.user
+    console.log(`[Heater Request] address: ${user.dong}-${user.ho} unitNum: ${unitNum}, unitStatus: ${unitStatus}, unitTemp: ${unitTemp} `);
+    if (unitStatus != "on" && unitStatus != "off") {
+      console.log(`[Heater Request] address: ${user.dong}-${user.ho} unitStatus error: ${unitStatus}`)
+      throw new HttpException(
+        '잘못된 파라미터 입니다.',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    try {
+      result = await this.heaterService.requestHeater(user, unitNum, unitStatus, unitTemp);
     } catch (error) {
       result = error;
     }
