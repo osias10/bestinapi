@@ -30,7 +30,7 @@ export class HeaterService {
   }
 
   async requestHeater(user: User, unitNum: string, status: string, temp: number): Promise<Object> {
-    
+    temp = Math.trunc(temp)
     let unitStatus = `${status}/${temp}`
     try {
       let requestResult = await this.socketService.requestSocket(user.ip, 10000, makeHeaterXml(user.ip, "control", unitNum, unitStatus));
@@ -68,12 +68,12 @@ function getHeaterStatusXmlResult(xml: string): Object {
 
     let resultList = resultJson["imap"]["service"]["status_info"];
     let result = {};
-    result["unit_num"] = resultList["_attributes"]["unit_num"];
+    result["unitNum"] = resultList["_attributes"]["unit_num"];
     let unitStatus: string = resultList["_attributes"]["unit_status"];
     let unitStatusList = unitStatus.split('/');
-    result["unit_status"] = unitStatusList[0];
-    result["set_temp"] = unitStatusList[1];
-    result["now_temp"] = unitStatusList[2];
+    result["unitStatus"] = unitStatusList[0];
+    result["setTemp"] = unitStatusList[1];
+    result["nowTemp"] = unitStatusList[2];
     
     return result;
   }

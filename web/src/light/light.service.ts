@@ -102,14 +102,14 @@ export class LightService {
         // console.log("el");
         // console.log(el);
         let st = {};
-        st["unit_num"] = el["_attributes"]["unit_num"];
-        st["unit_status"] = el["_attributes"]["unit_status"]
+        st["unitNum"] = el["_attributes"]["unit_num"];
+        st["unitStatus"] = el["_attributes"]["unit_status"]
         statusList.push(st);
       }
     } else {
       let st = {};
-      st["unit_num"] = resultList["_attributes"]["unit_num"];
-      st["unit_status"] = resultList["_attributes"]["unit_status"]
+      st["unitNum"] = resultList["_attributes"]["unit_num"];
+      st["unitStatus"] = resultList["_attributes"]["unit_status"]
       statusList.push(st);
     }
     
