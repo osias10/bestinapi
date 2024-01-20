@@ -3,6 +3,7 @@ import { stringify } from 'querystring';
 import { ApartService } from 'src/apart/apart.service';
 import { LocalAuthenticationGuard } from 'src/authentication/localAuthentication.guard';
 import RequestWithUser from 'src/authentication/requestWithUser.interface';
+import { FanService } from 'src/fan/fan.service';
 import { HeaterService } from 'src/heater/heater.service';
 import { LightService } from 'src/light/light.service';
 
@@ -11,7 +12,8 @@ export class BiosapiController {
   constructor(
     private readonly lightService: LightService,
     private readonly apartService: ApartService,
-    private readonly heaterService: HeaterService) {}
+    private readonly heaterService: HeaterService,
+    private readonly fanService: FanService) {}
 
   @UseGuards(LocalAuthenticationGuard)
   @Post('lighton')
@@ -106,4 +108,40 @@ export class BiosapiController {
     }
     return result;
   }
+
+  @UseGuards(LocalAuthenticationGuard)
+  @Get('fan')
+  async fanStatus(@Req() request: RequestWithUser) {
+    let result;
+    let user = request.user;
+    try{
+      console.log(`[Fan Status] address: ${user.dong}-${user.ho}`);
+      result = await this.fanService.requestFanStatus(user);
+    } catch (error) {
+      result = error;
+    }
+    return result;
+  }
+
+  @UseGuards(LocalAuthenticationGuard)
+  @Post('fan')
+  async fan(@Req() request: RequestWithUser, @Body('unitStatus') unitStatus: string) {
+    let result;
+    let user = request.user
+    console.log(`[Fan Request] address: ${user.dong}-${user.ho}, unitStatus: ${unitStatus}`);
+    if (unitStatus != "on" && unitStatus != "off" && unitStatus != "low" && unitStatus != "mid" && unitStatus != "high" ) {
+      console.log(`[Fan Request] address: ${user.dong}-${user.ho} unitStatus error: ${unitStatus}`)
+      throw new HttpException(
+        '잘못된 파라미터 입니다.',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    try {
+      result = await this.fanService.requestFan(user, unitStatus);
+    } catch (error) {
+      result = error;
+    }
+    return result;
+  }
+  
 }

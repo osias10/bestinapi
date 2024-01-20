@@ -4,18 +4,17 @@ import User from 'src/users/user.entity';
 const xmlConvert = require('xml-js');
 
 @Injectable()
-export class HeaterService {
-
+export class FanService {
   constructor(private readonly socketService: SocketService) {}
 
-  async requestHeaterStatus(user: User, unitNum: string): Promise<Object> {
+  async requestFanStatus(user: User): Promise<Object> {
     if (true) {
       try {
-        let requestResult = await this.socketService.requestSocket(user.ip, 10000, makeHeaterXml(user.ip, "status", unitNum, "null"));
+        let requestResult = await this.socketService.requestSocket(user.ip, 10000, makeFanXml(user.ip, "status", "null"));
         let result = {};
-        result["data"] = getHeaterStatusXmlResult(requestResult);
+        result["data"] = getFanStatusXmlResult(requestResult);
         return result;
-                    
+
       } catch (error) {
         console.log ("socket 실행 에러 발생:" , error)
         return ("Socket Error")
@@ -29,13 +28,12 @@ export class HeaterService {
     } 
   }
 
-  async requestHeater(user: User, unitNum: string, status: string, temp: number): Promise<Object> {
-    temp = Math.trunc(temp)
-    let unitStatus = `${status}/${temp}`
+  async requestFan(user: User, status: string): Promise<Object> {
+  
     try {
-      let requestResult = await this.socketService.requestSocket(user.ip, 10000, makeHeaterXml(user.ip, "control", unitNum, unitStatus));
+      let requestResult = await this.socketService.requestSocket(user.ip, 10000, makeFanXml(user.ip, "control", status));
       let result = {};
-      result["data"] = getHeaterStatusXmlResult(requestResult);
+      result["data"] = getFanStatusXmlResult(requestResult);
       return result;
                   
     } catch (error) {
@@ -50,30 +48,29 @@ export class HeaterService {
 
 }
 
-function makeHeaterXml(wallpadIp:string, action: string, unitNum:string ='null', ctrlAction: string='null'): string {
+function makeFanXml(wallpadIp:string, action: string, ctrlAction: string='null'): string {
   let request: string = `<?xml version="1.0" encoding="utf-8"?>
                           <imap ver = "1.0" address ="${wallpadIp}" sender = "mobile">
-                              <service type = "request" name = "remote_access_temper">
+                              <service type = "request" name = "remote_access_ventil">
                                   <target name = "internet" id = "1" msg_no = "11"/>
                                   <action>"${action}"</action>
-                                  <params dev_num = "1" unit_num = "${unitNum}" ctrl_action = "${ctrlAction}"/>
+                                  <params dev_num = "1" unit_num = "ventil" ctrl_action = "${ctrlAction}"/>
                               </service>
                           </imap>`
   return request
 }
 
-function getHeaterStatusXmlResult(xml: string): Object {
+function getFanStatusXmlResult(xml: string): Object {
   let resultJson = xmlConvert.xml2js(xml, {compact: true, spaces: 2});
   //console.log(resultJson);
 
   let resultList = resultJson["imap"]["service"]["status_info"];
   let result = {};
-  result["unitNum"] = resultList["_attributes"]["unit_num"];
+  // result["unitNum"] = resultList["_attributes"]["unit_num"];
   let unitStatus: string = resultList["_attributes"]["unit_status"];
-  let unitStatusList = unitStatus.split('/');
-  result["unitStatus"] = unitStatusList[0];
-  result["setTemp"] = unitStatusList[1];
-  result["nowTemp"] = unitStatusList[2];
+
+  result["unitStatus"] = unitStatus;
+
   
   return result;
 }
