@@ -143,5 +143,19 @@ export class BiosapiController {
     }
     return result;
   }
+
+  @UseGuards(LocalAuthenticationGuard)
+  @Get('parkinfo')
+  async parkInfo(@Req() request: RequestWithUser) {
+    let result: object;
+    let user = request.user
+    try {
+      console.log(`[Request ParkInfo] address: ${user.dong}-${user.ho}`);
+      result = await this.apartService.getParkInfo(user);
+    } catch (error) {
+      result = error;
+    }
+    return result;
+  }
   
 }

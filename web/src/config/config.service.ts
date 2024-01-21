@@ -13,4 +13,8 @@ export class ConfigService {
     async getElvServer() {
         return await this.configRepository.findOneBy( {server_name: "elevator" });
     }
+    
+    async getParkInfoServer() {
+        return await this.configRepository.findOneBy( {server_name: "parkInfo" });
+    }
 }
