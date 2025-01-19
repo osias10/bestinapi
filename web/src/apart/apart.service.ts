@@ -82,16 +82,25 @@ export class ApartService {
     try {
       let rs = await this.socketService.requestSocket(parkInfoIp, parkInfoPort, request);
       let resultJson = xmlConvert.xml2js(rs, {compact: true, spaces: 2});
-      console.log(resultJson);
+      console.log("getParkInfo result: ", JSON.stringify(resultJson));
       if (this.makeResult(getSuccessXmlResult(rs))) {
         let data = {};
-        data["location"] = resultJson["imap"]["service"]["park_info"]["_attributes"]["location_text"];
+        let parkInfoList = resultJson["imap"]["service"]["park_info"];
+        parkInfoList.sort((a,b) => {
+          if (a._attributes.time < b._attributes.time) return 1;
+          if (a._attributes.time > b._attributes.time) return -1;
+
+          return 0;
+        })
+        // data["location"] = resultJson["imap"]["service"]["park_info"]["_attributes"]["location_text"];
+        data["location"] = parkInfoList[0]["_attributes"]["location_text"];
+
         let result = {};
         result["data"] = data;
         return result;
       }
     } catch (error) {
-      console.log("parkInfo Error");
+      console.log("parkInfo Error: ", error);
       throw error;
     }
 

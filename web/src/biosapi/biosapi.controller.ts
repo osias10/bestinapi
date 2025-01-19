@@ -4,6 +4,7 @@ import { ApartService } from 'src/apart/apart.service';
 import { LocalAuthenticationGuard } from 'src/authentication/localAuthentication.guard';
 import RequestWithUser from 'src/authentication/requestWithUser.interface';
 import { FanService } from 'src/fan/fan.service';
+import { GasService } from 'src/gas/gas.service';
 import { HeaterService } from 'src/heater/heater.service';
 import { LightService } from 'src/light/light.service';
 
@@ -13,7 +14,8 @@ export class BiosapiController {
     private readonly lightService: LightService,
     private readonly apartService: ApartService,
     private readonly heaterService: HeaterService,
-    private readonly fanService: FanService) {}
+    private readonly fanService: FanService,
+    private readonly gasService: GasService) {}
 
   @UseGuards(LocalAuthenticationGuard)
   @Post('lighton')
@@ -157,5 +159,39 @@ export class BiosapiController {
     }
     return result;
   }
+
+  @UseGuards(LocalAuthenticationGuard)
+  @Get('gas')
+  async gasStatus(@Req() request: RequestWithUser) {
+    let result;
+    let user = request.user;
+    try{
+      console.log(`[Gas Status] address: ${user.dong}-${user.ho}`);
+      result = await this.gasService.requestGasStatus(user);
+    } catch (error) {
+      result = error;
+    }
+    return result;
+  }
   
+  @UseGuards(LocalAuthenticationGuard)
+  @Post('gas')
+  async gas(@Req() request: RequestWithUser, @Body('unitStatus') unitStatus: string) {
+    let result;
+    let user = request.user
+    console.log(`[Gas Request] address: ${user.dong}-${user.ho}, unitStatus: ${unitStatus}`);
+    if (unitStatus != "open" && unitStatus != "close") {
+      console.log(`[Gas Request] address: ${user.dong}-${user.ho} unitStatus error: ${unitStatus}`)
+      throw new HttpException(
+        '잘못된 파라미터 입니다.',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    try {
+      result = await this.gasService.requestGas(user, unitStatus);
+    } catch (error) {
+      result = error;
+    }
+    return result;
+  }
 }
