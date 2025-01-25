@@ -86,14 +86,20 @@ export class ApartService {
       if (this.makeResult(getSuccessXmlResult(rs))) {
         let data = {};
         let parkInfoList = resultJson["imap"]["service"]["park_info"];
-        parkInfoList.sort((a,b) => {
-          if (a._attributes.time < b._attributes.time) return 1;
-          if (a._attributes.time > b._attributes.time) return -1;
+        let parkInfo = "";
+        if (Array.isArray(parkInfoList)) {
+          parkInfoList.sort((a,b) => {
+            if (a._attributes.time < b._attributes.time) return 1;
+            if (a._attributes.time > b._attributes.time) return -1;
 
-          return 0;
-        })
+            return 0;
+          })
+          parkInfo = parkInfoList[0]["_attributes"]["location_text"];
+        } else {
+          parkInfo = parkInfoList["_attributes"]["location_text"];
+        }
         // data["location"] = resultJson["imap"]["service"]["park_info"]["_attributes"]["location_text"];
-        data["location"] = parkInfoList[0]["_attributes"]["location_text"];
+        data["location"] = parkInfo;
 
         let result = {};
         result["data"] = data;
